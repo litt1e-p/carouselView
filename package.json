@@ -1,0 +1,35 @@
+{
+  "name": "carousel-view",
+  "version": "0.0.1",
+  "description": "a responsive & lightweight carousel component for vue",
+  "config": {
+    "libName": "carousel-view"
+  },
+  "keywords": [
+    "carousel-view",
+    "carousel",
+    "swiper",
+    "slider",
+    "auto height",
+    "auto width",
+    "lightweight",
+    "swipe",
+    "vue"
+  ],
+  "author": "litt1e-p",
+  "license": "MIT",
+  "main": "dist/carousel-view.umd.js",
+  "module": "dist/carousel-view.esm.js",
+  "unpkg": "dist/carousel-view.min.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/litt1e-p/carouselView.git"
+  },
+  "bugs": {
+    "url": "https://github.com/litt1e-p/carouselView/issues"
+  },
+  "homepage": "https://github.com/litt1e-p/carouselView#readme",
+  "dependencies": {
+    "vue": "^2.6.11"
+  }
+}
