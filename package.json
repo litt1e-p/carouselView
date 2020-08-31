@@ -1,6 +1,6 @@
 {
   "name": "carousel-view",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "a responsive & lightweight carousel component for vue",
   "config": {
     "libName": "carousel-view"
