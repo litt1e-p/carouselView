@@ -14,7 +14,7 @@ npm i carousel-view
 
 1. Global registration
 
-You may install Vue Carousel globally:
+You may install Vue CarouselView globally:
 
 ```js
 // in main.js
