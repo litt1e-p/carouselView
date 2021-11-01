@@ -1,9 +1,13 @@
 # CarouselView
 
+"a responsive & lightweight carousel component for vue 3.x
+
+> [vue 2.x supports](https://github.com/litt1e-p/carouselView)
+
 #### Installation
 
 ```js
-npm i carousel-view
+npm i carousel-view@next
 ```
 
 #### Usage
@@ -17,24 +21,27 @@ You may install Vue Carousel globally:
 import CarouselView from 'carousel-view'
 import 'carousel-view/dist/style/carousel-view.css'
 
-Vue.use(CarouselView)
+createApp(App).use(Transitions)
 ```
 
 2. Local component
 
 Include the carousel directly into your component using import:
 
+> or just use \<script setup\>
+
 ```js
 // in your vue file
+import { defineComponent } from 'vue'
 import { CarouselView } from 'carousel-view'
 import 'carousel-view/dist/style/carousel-view.css'
 
-export default {
+export default defineComponent({
   components: {
     CarouselView
   }
   ...
-}
+})
 ```
 
 #### HTML Structure
