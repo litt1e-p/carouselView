@@ -1,5 +1,9 @@
 # CarouselView
 
+a responsive & lightweight carousel component for vue
+
+> [vue 3.x supports](https://github.com/litt1e-p/carouselView/tree/next)
+
 #### Installation
 
 ```js
