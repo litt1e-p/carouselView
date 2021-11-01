@@ -1,7 +1,7 @@
 {
   "name": "carousel-view",
-  "version": "0.0.2",
-  "description": "a responsive & lightweight carousel component for vue",
+  "version": "3.0.0",
+  "description": "a responsive & lightweight carousel component for vue 3.x",
   "config": {
     "libName": "carousel-view"
   },
@@ -29,7 +29,7 @@
     "url": "https://github.com/litt1e-p/carouselView/issues"
   },
   "homepage": "https://github.com/litt1e-p/carouselView#readme",
-  "dependencies": {
-    "vue": "^2.6.11"
+  "peerDependencies": {
+    "vue": "^3.2.20"
   }
 }

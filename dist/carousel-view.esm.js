@@ -1,1 +1,113 @@
-function t(t){return function(t){if(Array.isArray(t))return e(t)}(t)||function(t){if("undefined"!=typeof Symbol&&Symbol.iterator in Object(t))return Array.from(t)}(t)||function(t,i){if(!t)return;if("string"==typeof t)return e(t,i);var n=Object.prototype.toString.call(t).slice(8,-1);"Object"===n&&t.constructor&&(n=t.constructor.name);if("Map"===n||"Set"===n)return Array.from(t);if("Arguments"===n||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return e(t,i)}(t)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function e(t,e){(null==e||e>t.length)&&(e=t.length);for(var i=0,n=new Array(e);i<e;i++)n[i]=t[i];return n}var i="vertical",n="horizontal";function r(t,e,i,n,r,s,o,a,h,u){"boolean"!=typeof o&&(h=a,a=o,o=!1);const c="function"==typeof i?i.options:i;let l;if(t&&t.render&&(c.render=t.render,c.staticRenderFns=t.staticRenderFns,c._compiled=!0,r&&(c.functional=!0)),n&&(c._scopeId=n),s?(l=function(t){(t=t||this.$vnode&&this.$vnode.ssrContext||this.parent&&this.parent.$vnode&&this.parent.$vnode.ssrContext)||"undefined"==typeof __VUE_SSR_CONTEXT__||(t=__VUE_SSR_CONTEXT__),e&&e.call(this,h(t)),t&&t._registeredComponents&&t._registeredComponents.add(s)},c._ssrRegister=l):e&&(l=o?function(t){e.call(this,u(t,this.$root.$options.shadowRoot))}:function(t){e.call(this,a(t))}),l)if(c.functional){const t=c.render;c.render=function(e,i){return l.call(i),t(e,i)}}else{const t=c.beforeCreate;c.beforeCreate=t?[].concat(t,l):[l]}return i}const s={name:"carouselView",props:{direction:{type:String,default:n,validator:function(t){return[i,n].indexOf(t)>-1}},mousewheelControl:{type:Boolean,default:!0},performanceMode:{type:Boolean,default:!1},paginationVisible:{type:Boolean,default:!0},paginationClickable:{type:Boolean,default:!1},loop:{type:Boolean,default:!0},speed:{type:Number,default:300},autoHeight:{type:Boolean,default:!0},autoWidth:{type:Boolean,default:!0},indicatorColor:{type:String,default:function(){return"rgba(153, 153, 153, 0.5)"}},indicatorTintColor:{type:String,default:function(){return"#007aff"}}},data:function(){return{ref:void 0,currentPage:1,lastPage:1,translateX:0,translateY:0,startTranslate:0,delta:0,dragging:!1,startPos:null,transitioning:!1,slideEls:[],translateOffset:0,transitionDuration:0,currentHeight:"unset",currentWidth:"unset"}},created:function(){this.ref=this._uniq()},mounted:function(){this._onTouchMove=this._onTouchMove.bind(this),this._onTouchEnd=this._onTouchEnd.bind(this),this.slideEls=[].map.call(this.$refs[this.ref].children,(function(t){return t})),this.loop?(this.$nextTick((function(){this._createLoop(),this.setPage(this.currentPage,!0)})),this._initObserver()):this.setPage(this.currentPage)},beforeDestroy:function(){this._unObserver()},methods:{_uniq:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:7;return(16777215*Math.random()<<t).toString(16)},_initObserver:function(){var t=document.querySelector(".crsl__wr");if(t){var e=window.MutationObserver||window.WebKitMutationObserver;this.observer=new e(this._updateLoop),this.observer.observe(t,{subtree:!0,childList:!0,attributes:!0})}},_unObserver:function(){this.observer&&(this.observer.disconnect(),this.observer=null),this._removeListeners()},_removeListeners:function(){document.removeEventListener("touchmove",this._onTouchMove),document.removeEventListener("touchend",this._onTouchEnd),document.removeEventListener("mousemove",this._onTouchMove),document.removeEventListener("mouseup",this._onTouchEnd)},next:function(){var t=this.currentPage;t<this.slideEls.length||this.loop?this.setPage(t+1):this._revert()},prev:function(){var t=this.currentPage;t>1||this.loop?this.setPage(t-1):this._revert()},setPage:function(t,e){var i=this;this.lastPage=this.currentPage,0===t?this.currentPage=this.slideEls.length:t===this.slideEls.length+1?this.currentPage=1:this.currentPage=t,this.loop?(0===this.delta&&this._setTranslate(i._getTranslateOfPage(this.lastPage)),setTimeout((function(){i._setTranslate(i._getTranslateOfPage(t)),e||i._onTransitionStart()}),0)):(this._setTranslate(this._getTranslateOfPage(t)),e||this._onTransitionStart())},isHorizontal:function(){return this.direction===n},isVertical:function(){return this.direction===i},_onTouchStart:function(t){this.startPos=this._getTouchPos(t),this.delta=0,this.startTranslate=this._getTranslateOfPage(this.currentPage),this.startTime=(new Date).getTime(),this.dragging=!0,this.transitionDuration=0,document.addEventListener("touchmove",this._onTouchMove,{passive:!1}),document.addEventListener("touchend",this._onTouchEnd,{passive:!1}),document.addEventListener("mousemove",this._onTouchMove,{passive:!1}),document.addEventListener("mouseup",this._onTouchEnd,{passive:!1})},_onTouchMove:function(t){this.delta=this._getTouchPos(t)-this.startPos,this.performanceMode||(this._setTranslate(this.startTranslate+this.delta),this.$emit("slider-move",this._getTranslate())),(this.isVertical()||this.isHorizontal()&&Math.abs(this.delta)>0)&&t.preventDefault()},_onTouchEnd:function(t){this.dragging=!1,this.transitionDuration=this.speed;var e=(new Date).getTime()-this.startTime<1e3;this.delta<-100||e&&this.delta<-15?this.next():this.delta>100||e&&this.delta>15?this.prev():this._revert(),this._removeListeners()},_onWheel:function(t){this.mousewheelControl&&(this.transitioning||(t.deltaY>0?this.next():this.prev()),this._isPageChanged()&&t.preventDefault())},_revert:function(){this.setPage(this.currentPage)},_getTouchPos:function(t){var e=this.isHorizontal()?"pageX":"pageY";return t.changedTouches?t.changedTouches[0][e]:t[e]},_onTransitionStart:function(){this.transitioning=!0,this.transitionDuration=this.speed,this._isPageChanged()?this.$emit("slide-change-start",this.currentPage):this.$emit("slide-revert-start",this.currentPage)},_onTransitionEnd:function(){this.transitioning=!1,this.transitionDuration=0,this.delta=0,this._isPageChanged()?this.$emit("slide-change-end",this.currentPage):this.$emit("slide-revert-end",this.currentPage),this.autoHeight&&this.isHorizontal()&&this._toggleHeight(),this.autoWidth&&this.isVertical()&&this._toggleWidth()},_toggleHeight:function(){var e=this,i=this.$refs[this.ref];if(i&&i.children){this.currentHeight="auto";var n=t(i.children).filter((function(e){return!t(e.classList).includes("crsl__mirror")})),r=getComputedStyle(n[this.currentPage-1],null).getPropertyValue("height");this.transitionDuration=this.speed,this.$nextTick((function(){e.currentHeight=r,setTimeout((function(){e.transitionDuration=0}),e.speed)}))}},_toggleWidth:function(){var e=this,i=this.$refs[this.ref];if(i&&i.children){this.currentWidth="auto";var n=t(i.children).filter((function(e){return!t(e.classList).includes("crsl__mirror")})),r=getComputedStyle(n[this.currentPage-1],null).getPropertyValue("width");this.transitionDuration=this.speed,this.$nextTick((function(){e.currentWidth=r,setTimeout((function(){e.transitionDuration=0}),e.speed)}))}},_isPageChanged:function(){return this.lastPage!==this.currentPage},_setTranslate:function(t){this[this.isHorizontal()?"translateX":"translateY"]=t},_getTranslate:function(){return this[this.isHorizontal()?"translateX":"translateY"]},_getTranslateOfPage:function(t){if(0===t)return 0;var e=this.isHorizontal()?"clientWidth":"clientHeight";return-[].reduce.call(this.slideEls,(function(i,n,r){return r>t-2?i:i+n[e]}),0)+this.translateOffset},_createLoop:function(){var t=this.isHorizontal()?"clientWidth":"clientHeight",e=this.$refs[this.ref];if(e){var i=e.firstElementChild.cloneNode(!0),n=e.lastElementChild.cloneNode(!0);i.setAttribute("class","crsl__mirror crsl__mirror-first"),n.setAttribute("class","crsl__mirror crsl__mirror-last"),e.insertBefore(n,e.firstElementChild),e.appendChild(i),this.translateOffset=-n[t]}},_updateLoop:function(t,e){var i=this,n=this.$refs[this.ref];if(n&&!t.some((function(t){return t.target===n}))){var r=n.querySelectorAll(".crsl__mirror");if(r&&r.length){for(var s=function(t,e){i.$nextTick((function(){return r[t].remove()}))},o=0,a=r.length>>>0;o<a;o++)s(o);this.$nextTick((function(){return i._createLoop()}))}}}}};var o=function(){var t=this,e=t.$createElement,i=t._self._c||e;return i("div",{staticClass:"crsl__wrapper",class:[t.direction,{dragging:t.dragging}],on:{touchstart:t._onTouchStart,mousedown:t._onTouchStart,wheel:t._onWheel}},[i("div",{ref:t.ref,staticClass:"crsl__wr",style:{transform:"translate3d("+t.translateX+"px,"+t.translateY+"px, 0)","transition-duration":t.transitionDuration+"ms","max-height":t.currentHeight,"max-width":t.currentWidth},on:{transitionend:t._onTransitionEnd}},[t._t("default")],2),t._v(" "),i("div",{directives:[{name:"show",rawName:"v-show",value:t.paginationVisible,expression:"paginationVisible"}],staticClass:"crsl__pagination"},t._l(t.slideEls,(function(e,n){return i("span",{key:n,staticClass:"crsl__pagination-bullet",class:{active:n+1===t.currentPage},style:{background:n+1===t.currentPage?t.indicatorTintColor:t.indicatorColor},on:{click:function(e){t.paginationClickable&&t.setPage(n+1)}}})})),0)])};o._withStripped=!0;const a=r({render:o,staticRenderFns:[]},undefined,s,"data-v-e2436cfe",false,undefined,!1,void 0,void 0,void 0);var h=[a],u=function(t){h.forEach((function(e){t.component(e.name,e)}))};"undefined"!=typeof window&&window.Vue&&u(window.Vue);export default u;export{a as CarouselView};
+import { ref as e, reactive as t, onMounted as r, nextTick as n, onBeforeUnmount as a, computed as i, openBlock as o, createElementBlock as s, normalizeClass as l, unref as u, createElementVNode as d, normalizeStyle as c, renderSlot as g, withDirectives as m, Fragment as p, renderList as h, vShow as v } from "vue";
+const f = { class: "crsl__pagination" }, P = ["onClick"], _ = { name: "CarouselView" };
+var b = ((e2, t2) => {
+  for (const [r2, n2] of t2)
+    e2[r2] = n2;
+  return e2;
+})(Object.assign(_, { props: { direction: { type: String, default: "horizontal", validator: (e2) => ["vertical", "horizontal"].indexOf(e2) > -1 }, mousewheelControl: { type: Boolean, default: true }, performanceMode: { type: Boolean, default: false }, paginationVisible: { type: Boolean, default: true }, paginationClickable: { type: Boolean, default: false }, loop: { type: Boolean, default: true }, speed: { type: Number, default: 300 }, autoHeight: { type: Boolean, default: true }, autoWidth: { type: Boolean, default: true }, indicatorColor: { type: String, default: () => "rgba(153, 153, 153, 0.5)" }, indicatorTintColor: { type: String, default: () => "#007aff" } }, emits: ["slider-move", "slide-change-start", "slide-revert-start", "slide-change-end", "slide-revert-end"], setup: function(_2, { emit: b2 }) {
+  const w2 = _2, y2 = e(null), E = t({ currentPage: 1, lastPage: 1, translateX: 0, translateY: 0, startTranslate: 0, delta: 0, dragging: false, startPos: null, transitioning: false, slideEls: [], translateOffset: 0, transitionDuration: 0, currentHeight: "unset", currentWidth: "unset", startTime: 0, observer: void 0 });
+  r(() => {
+    E.slideEls = [].map.call(y2.value.children, (e2) => e2), w2.loop ? (n(function() {
+      $(), B(E.currentPage, true);
+    }), C()) : B(E.currentPage);
+  }), a(() => {
+    T();
+  });
+  const C = () => {
+    const e2 = document.querySelector(".crsl__wr");
+    if (!e2)
+      return;
+    const t2 = window.MutationObserver || window.WebKitMutationObserver;
+    E.observer = new t2(F), E.observer.observe(e2, { subtree: true, childList: true, attributes: true });
+  }, T = () => {
+    E.observer && (E.observer.disconnect(), E.observer = null), D();
+  }, D = () => {
+    document.removeEventListener("touchmove", V), document.removeEventListener("touchend", k), document.removeEventListener("mousemove", V), document.removeEventListener("mouseup", k);
+  }, L = () => {
+    const e2 = E.currentPage;
+    e2 < E.slideEls.length || w2.loop ? B(e2 + 1) : M();
+  }, W = () => {
+    const e2 = E.currentPage;
+    e2 > 1 || w2.loop ? B(e2 - 1) : M();
+  }, B = (e2, t2) => {
+    E.lastPage = E.currentPage, e2 === 0 ? E.currentPage = E.slideEls.length : e2 === E.slideEls.length + 1 ? E.currentPage = 1 : E.currentPage = e2, w2.loop ? (E.delta === 0 && j(K(E.lastPage)), setTimeout(function() {
+      j(K(e2)), t2 || X();
+    }, 0)) : (j(K(e2)), t2 || X());
+  }, H = i(() => w2.direction === "horizontal"), O = i(() => w2.direction === "vertical"), S = (e2) => {
+    E.startPos = Y(e2), E.delta = 0, E.startTranslate = K(E.currentPage), E.startTime = new Date().getTime(), E.dragging = true, E.transitionDuration = 0, document.addEventListener("touchmove", V, { passive: false }), document.addEventListener("touchend", k, { passive: false }), document.addEventListener("mousemove", V, { passive: false }), document.addEventListener("mouseup", k, { passive: false });
+  }, V = (e2) => {
+    E.delta = Y(e2) - E.startPos, w2.performanceMode || (j(E.startTranslate + E.delta), b2("slider-move", I())), (O || H && Math.abs(E.delta) > 0) && e2.preventDefault();
+  }, k = (e2) => {
+    E.dragging = false, E.transitionDuration = w2.speed;
+    const t2 = new Date().getTime() - E.startTime < 1e3;
+    E.delta < -100 || t2 && E.delta < -15 ? L() : E.delta > 100 || t2 && E.delta > 15 ? W() : M(), D();
+  }, x = (e2) => {
+    w2.mousewheelControl && (E.transitioning || (e2.deltaY > 0 ? L() : W()), q() && e2.preventDefault());
+  }, M = () => {
+    B(E.currentPage);
+  }, Y = (e2) => {
+    const t2 = H ? "pageX" : "pageY";
+    return e2.changedTouches ? e2.changedTouches[0][t2] : e2[t2];
+  }, X = () => {
+    E.transitioning = true, E.transitionDuration = w2.speed, q() ? b2("slide-change-start", E.currentPage) : b2("slide-revert-start", E.currentPage);
+  }, z = () => {
+    E.transitioning = false, E.transitionDuration = 0, E.delta = 0, q() ? b2("slide-change-end", E.currentPage) : b2("slide-revert-end", E.currentPage), w2.autoHeight && H && A(), w2.autoWidth && O && N();
+  }, A = () => {
+    const e2 = y2.value;
+    if (!e2 || !e2.children)
+      return;
+    E.currentHeight = "auto";
+    const t2 = [...e2.children].filter((e3) => ![...e3.classList].includes("crsl__mirror")), r2 = getComputedStyle(t2[E.currentPage - 1], null).getPropertyValue("height");
+    E.transitionDuration = w2.speed, n(() => {
+      E.currentHeight = r2, setTimeout(() => {
+        E.transitionDuration = 0;
+      }, w2.speed);
+    });
+  }, N = () => {
+    const e2 = y2.value;
+    if (!e2 || !e2.children)
+      return;
+    E.currentWidth = "auto";
+    const t2 = [...e2.children].filter((e3) => ![...e3.classList].includes("crsl__mirror")), r2 = getComputedStyle(t2[E.currentPage - 1], null).getPropertyValue("width");
+    E.transitionDuration = w2.speed, n(() => {
+      E.currentWidth = r2, setTimeout(() => {
+        E.transitionDuration = 0;
+      }, w2.speed);
+    });
+  }, q = () => E.lastPage !== E.currentPage, j = (e2) => {
+    E[H ? "translateX" : "translateY"] = e2;
+  }, I = () => E[H ? "translateX" : "translateY"], K = (e2) => {
+    if (e2 === 0)
+      return 0;
+    const t2 = H ? "clientWidth" : "clientHeight";
+    return -[].reduce.call(E.slideEls, function(r2, n2, a2) {
+      return a2 > e2 - 2 ? r2 : r2 + n2[t2];
+    }, 0) + E.translateOffset;
+  }, $ = () => {
+    const e2 = H ? "clientWidth" : "clientHeight", t2 = y2.value;
+    if (!t2)
+      return;
+    const r2 = t2.firstElementChild.cloneNode(true), n2 = t2.lastElementChild.cloneNode(true);
+    r2.setAttribute("class", "crsl__mirror crsl__mirror-first"), n2.setAttribute("class", "crsl__mirror crsl__mirror-last"), t2.insertBefore(n2, t2.firstElementChild), t2.appendChild(r2), E.translateOffset = -n2[e2];
+  }, F = (e2, t2) => {
+    const r2 = y2.value;
+    if (!r2 || e2.some((e3) => e3.target === r2))
+      return;
+    const a2 = r2.querySelectorAll(".crsl__mirror");
+    if (a2 && a2.length) {
+      for (let e3 = 0, t3 = a2.length >>> 0; e3 < t3; e3++)
+        n(() => a2[e3].remove());
+      n(() => $());
+    }
+  };
+  return (e2, t2) => (o(), s("div", { class: l(["crsl__wrapper", [_2.direction, { dragging: u(E).dragging }]]), onTouchstart: S, onMousedown: S, onWheel: x }, [d("div", { class: "crsl__wr", ref: (e3, t3) => {
+    t3.rf = e3, y2.value = e3;
+  }, style: c({ transform: "translate3d(" + u(E).translateX + "px," + u(E).translateY + "px, 0)", "transition-duration": u(E).transitionDuration + "ms", "max-height": u(E).currentHeight, "max-width": u(E).currentWidth }), onTransitionend: z }, [g(e2.$slots, "default", {}, void 0, true)], 36), m(d("div", f, [(o(true), s(p, null, h(u(E).slideEls, (e3, t3) => (o(), s("span", { class: l(["crsl__pagination-bullet", { active: t3 + 1 === u(E).currentPage }]), style: c({ background: t3 + 1 === u(E).currentPage ? _2.indicatorTintColor : _2.indicatorColor }), key: t3, onClick: (e4) => _2.paginationClickable && B(t3 + 1) }, null, 14, P))), 128))], 512), [[v, _2.paginationVisible]])], 34));
+} }), [["__scopeId", "data-v-48884066"]]);
+const w = [b], y = function(e2) {
+  w.forEach((t2) => {
+    e2.component(t2.name, t2);
+  });
+};
+typeof window != "undefined" && window.Vue && y(window.Vue);
+export { b as CarouselView, y as default };
